@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: true
 
       # Setup Python 3.12.7
       - name: Set up Python 3.12.7
@@ -35,16 +35,14 @@ jobs:
         env:
           TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
+          cd ./preprocessing
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
-
-          cd ./preprocessing
-          git add clean_dataset/*.csv pipeline/*.joblib
-
+          git add preprocessing/clean_dataset/*.csv preprocessing/pipeline/*.joblib
+          
           if ! git diff --cached --quiet; then
             git commit -m "Update: Clean dataset and pipeline from preprocessing [skip ci]"
-            git push
+            git push origin HEAD:${{ github.ref_name }}
           else
             echo "No changes to commit."
           fi
