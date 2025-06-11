@@ -42,6 +42,7 @@ def preprocess_data(data, target_column, processor_save_path, clean_train_datase
   # Memisahkan fitur dan target
   X = data.drop(target_column, axis=1)
   y = data[target_column]
+  print(y.isna().sum())
 
   # Splitting data dengan persentase 70:30
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -52,13 +53,17 @@ def preprocess_data(data, target_column, processor_save_path, clean_train_datase
 
   # Mengambil nama kolom dari processor
   column_names = preprocessor.get_feature_names_out()
-  
+
   # Membentuk dataframe untuk data latih
   train_df = pd.DataFrame(X_train, columns=column_names)
-  train_df[target_column] = y_train
+  train_df[target_column] = y_train.reset_index(drop=True)
+  
   # Membentuk dataframe untuk data uji
   test_df = pd.DataFrame(X_test, columns=column_names)
-  test_df[target_column] = y_test
+  test_df[target_column] = y_test.reset_index(drop=True)
+
+  print(test_df.isna().sum())
+  print(train_df.isna().sum())
 
   # Simpan data yang telah bersih ke dalam format csv
   train_df.to_csv(clean_train_dataset_save_path)
