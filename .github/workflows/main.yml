@@ -3,7 +3,7 @@ name: Preprocess Churn Data
 on:
   push:
     branches:
-      - main  
+      - main
 
 jobs:
   run-preprocessing:
@@ -35,13 +35,13 @@ jobs:
         env:
           TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          cd ./preprocessing
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}
 
+          cd ./preprocessing
           git add clean_dataset/*.csv pipeline/*.joblib
-          
+
           if ! git diff --cached --quiet; then
             git commit -m "Update: Clean dataset and pipeline from preprocessing [skip ci]"
             git push
